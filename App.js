@@ -7,7 +7,6 @@ import AssetExample from './components/AssetExample';
 
 // or any pure javascript modules available in npm
 import { Card } from 'react-native-paper';
-// import cities from './cities.json';
 
 const cities = require('./cities.json');
 
@@ -18,21 +17,21 @@ class WeatherApp extends Component {
       text: '',
       city: '',
       citiesList: cities,
+      api_key: 'ab3ed8d6fee36219c895ee0ce7de2fc5',
       loaded: false,
     };
   }
 
-  async componentDidMount() {
+  async callAPI() {
     await fetch(
       'http://api.openweathermap.org/data/2.5/weather?id=' +
         this.state.city +
-        '&appid=79d5e0edb70d1c555c69198eb4ceb656&units=metric'
+        '&appid='+ this.state.api_key + '&units=metric'
     )
       .then(response => response.json())
       .then(responseJson => {
         this.setState(
           {
-            dataSource: responseJson,
             name: responseJson.name,
             temp: responseJson.main.temp,
             pressure: responseJson.main.pressure,
@@ -52,16 +51,18 @@ class WeatherApp extends Component {
 
   updateCity = async city => {
     await this.setState({ city: city });
-    this.componentDidMount();
+    this.callAPI();
   };
 
-  search(user_input, city_list) {
-    var i;
-    console.log('a')
-    console.log(city_list);
-    // for (i; i < city_list; i++) {
-    //   console.log(city_list[i])
-    // }
+  search(text) {
+    cities.map(item => {
+      if (item.name.toLowerCase().startsWith(text.toLowerCase())) {
+        {
+          this.updateCity(item.id);
+        }
+        return;
+      }
+    });
   }
 
   renderResult() {
@@ -94,22 +95,19 @@ class WeatherApp extends Component {
 
           <TextInput
             style={styles.input_box}
-            onChangeText={text => this.setState({ text })}
-            value={this.state.text}
+            onChangeText={text => this.search(text)}
           />
 
           <Picker
-            selectedValue={this.state.city}
-            
+            selectedValue={this.state.city}           
             onValueChange={itemValue => {
               this.updateCity(itemValue);
             }}>
-            {this.state.citiesList.map((v, i) => {
+            {this.state.citiesList.map((v) => {
               return <Picker.Item label={v.name} value={v.id} />;
             })}
           </Picker>
           {this.renderResult()}
-          {this.search(this.state.text, cities)}
         </View>
       </ScrollView>
     );
@@ -162,3 +160,4 @@ const styles = StyleSheet.create({
     fonWeight: 20,
   },
 });
+
