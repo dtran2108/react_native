@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import { View, Text, Picker, StyleSheet, TextInput, Image, ScrollView } from 'react-native';
 import { Constants } from 'expo';
 
-// You can import from local files
-import AssetExample from './components/AssetExample';
-
 // or any pure javascript modules available in npm
 import { Card } from 'react-native-paper';
 
